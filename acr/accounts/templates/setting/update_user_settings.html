@@ -1,0 +1,66 @@
+{% extends "acbase.html" %}
+{% block content %}
+<h2>Update Settings for {{ user.username }}</h2>
+
+<div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+    <div><strong>Name:</strong> {{ user.profile.display_name }}</div>
+    <div><strong>Username:</strong> {{ user.username }}</div>
+    <div><strong>Email:</strong> {{ user.email }}</div>
+    <div>
+      <strong>Gender:</strong>
+      {% if user.profile.gender == "M" %} Male
+      {% elif user.profile.gender == "F" %} Female
+      {% else %} Other
+      {% endif %}
+    </div>
+    <div><strong>Institute:</strong> {{ user.profile.user_institute }}</div>
+    <div><strong>Employee Code:</strong> {{ user.profile.emp_code|default:"N/A" }}</div>
+  </div>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Setting</th>
+          <th scope="col">Description</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in settings_data %}
+        <tr>
+          <td class="fw-bold">{{ item.setting.display_name }}</td>
+          <td>{{ item.setting.description }}</td>
+          <td>
+            {% if item.setting.setting_type == 'string' %}
+            <input type="text" name="setting_{{ item.setting.id }}" value="{{ item.current_value }}"
+              class="form-control">
+            {% elif item.setting.setting_type == 'number' %}
+            <input type="number" step="any" name="setting_{{ item.setting.id }}" value="{{ item.current_value }}"
+              class="form-control">
+            {% elif item.setting.setting_type == 'boolean' %}
+            <select name="setting_{{ item.setting.id }}" class="form-select">
+              <option value="1" {% if item.current_value|lower in 'true,yes,1' %}selected{% endif %}>True</option>
+              <option value="0" {% if item.current_value|lower not in 'true,yes,1' %}selected{% endif %}>False</option>
+            </select>
+            {% elif item.setting.setting_type == 'json' %}
+            <textarea name="setting_{{ item.setting.id }}" rows="4"
+              class="form-control">{{ item.current_value }}</textarea>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Save</button>
+  <a href="{% url 'list_user_profiles' %}">Back to Users</a>
+</form>
+
+
+{% endblock %}

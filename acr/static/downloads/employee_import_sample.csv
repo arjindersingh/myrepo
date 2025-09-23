@@ -1,0 +1,9 @@
+emp_code,emp_name,job_categories_names,job_categories_ids,institutes_names,institutes_ids,departments_names,departments_ids,teaching_posts_names,teaching_posts_ids,subjects_names,subjects_ids,wings_names,wings_ids,employment_status_name,employment_status_id
+10001,Anita Sharma,Teaching,,IHS GMT|IHS Loharan,,Mathematics,,PGT,,Mathematics|Physics,,Senior Wing,,Active,
+10002,Rajeev Kumar,,2,,3|4,Science,,TGT,,Science,,Middle Wing,,,2
+10003,Simran Kaur,Non-Teaching,,IHS GMT,,Administration,,,,,,,,Active,
+10004,Harpreet Singh,Teaching,,Innocent Hearts College,,Commerce,,Assistant Professor,,Accounts|Business Studies,,College Wing,,Active,
+10005,Gurpreet Kaur,Teaching,,IHS Nurpur,,Primary,,PRT,,English|EVS|Maths,,Primary Wing,,Active,
+10006,Amanpreet,,1,,2,,4,,1|2,,5|6,,2|3,,1
+10007,Deepika,,,,,,,,,,,,,On Leave,
+10008,Kashish,Teaching,,IHS GMT,,Robotics,,Trainer,,Robotics|AI,,Senior Wing,,Active,

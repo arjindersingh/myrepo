@@ -1,0 +1,24 @@
+{% extends 'acbase.html' %}
+{% block title %}Add Scale{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Add a New Scale</h2>
+
+    <form method="post" class="shadow p-4 bg-white rounded">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Scale Name</label>
+            {{ form.name }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Scale Description</label>
+            {{ form.description }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Scale</button>
+        <a href="{% url 'show_scale_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

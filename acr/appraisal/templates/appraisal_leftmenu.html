@@ -1,0 +1,111 @@
+<div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white sidebar" onmouseover="expandSidebar()"
+    onmouseleave="collapseSidebar()" style="width: 200px; height: 100vh; position: fixed; transition: width 0.3s;">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        <!--- Dashboard -->
+        <li class="nav-item">
+            <a href="{% url 'show_appraisal_dashboard' %}" class="nav-link text-white">
+                <i class="bi bi-speedometer2"></i>
+                <span class="d-none d-md-inline">Appraisals</span>
+            </a>
+        </li>
+        <hr class="dropdown-divider my-1">
+        <li class="nav-item">
+            <a href="{% url 'manage_app_ex_emp' %}"
+                class="nav-link text-white px-3 py-2 rounded {% if request.resolver_match.url_name == 'manage_app_ex_emp' %}active bg-primary text-white{% endif %}">
+                <i class="bi bi-person-x me-2"></i>
+                Exclude Employees
+            </a>
+        </li>
+
+        <hr class="dropdown-divider my-1">
+        <li>
+            <a href="{% url 'start_appraisal_process' 1 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Self Appraisal
+            </a>
+        </li>
+
+        <li><a href="{% url 'start_appraisal_process' 2 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Principal Monthly Appraisal</a></li>
+        <li><a href="{% url 'start_appraisal_process' 4 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Examination</a></li>
+        <li><a href="{% url 'start_appraisal_process' 3 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Academics</a></li>
+        <li><a href="{% url 'start_appraisal_process' 5 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Principal's Annual Appraisal</a></li>
+        <li><a href="{% url 'start_appraisal_process' 6 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                HR</a></li>
+        <li><a href="{% url 'start_appraisal_process' 7 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Classroom Observation</a></li>
+        <li><a href="{% url 'start_appraisal_process' 8 %}"
+                class="nav-item text-white {% if request.resolver_match.url_name == 'start_appraisal_process' %}active{% endif %}">
+                Teacher Record Keeping</a></li>
+        <hr class="dropdown-divider my-1">
+        <li class="nav-item">
+            Reports
+        </li>
+        <li>
+            <a href="{% url 'show_appraisal_consolidated_Report' %}"
+               class="nav-item text-white {% if request.resolver_match.url_name == 'show_appraisal_consolidated_Report' %}active{% endif %}">
+               Consolidated 
+            </a>
+          </li>
+          
+    </ul>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("sidebar");
+        const dropdownItems = document.querySelectorAll("#sidebar .nav-item.dropdown");
+
+        // Expand/collapse sidebar
+        window.expandSidebar = function () {
+            sidebar.style.width = "250px";
+            const labels = sidebar.querySelectorAll("span");
+            labels.forEach(label => label.classList.remove("d-none"));
+        };
+
+        window.collapseSidebar = function () {
+            const isAnyDropdownHovered = Array.from(dropdownItems).some(item =>
+                item.matches(":hover") || item.querySelector(".dropdown-menu").matches(":hover")
+            );
+            if (!isAnyDropdownHovered) {
+                sidebar.style.width = "60px";
+                const labels = sidebar.querySelectorAll("span");
+                labels.forEach(label => label.classList.add("d-none"));
+            }
+        };
+
+        // Handle dropdowns on hover
+        dropdownItems.forEach(item => {
+            const menu = item.querySelector(".dropdown-menu");
+
+            item.addEventListener("mouseenter", function () {
+                if (menu) {
+                    menu.classList.add("show");
+                    menu.style.display = "block";
+                }
+            });
+
+            item.addEventListener("mouseleave", function () {
+                if (menu) {
+                    menu.classList.remove("show");
+                    menu.style.display = "none";
+                }
+                collapseSidebar();  // Re-check if sidebar should collapse
+            });
+
+            if (menu) {
+                menu.addEventListener("mouseleave", collapseSidebar);
+            }
+        });
+    });
+</script>

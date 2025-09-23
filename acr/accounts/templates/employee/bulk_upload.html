@@ -1,0 +1,27 @@
+{% extends "acbase.html" %}
+{% load accounts_filters %}
+{% block content %}
+{% load static %}
+<h2>Employee Bulk Upload</h2>
+
+{% load bootstrap5 %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<hr>
+<h4>CSV Columns (recommended)</h4>
+<pre>
+emp_code,emp_name,job_categories_names,job_categories_ids,institutes_names,institutes_ids,departments_names,departments_ids,teaching_posts_names,teaching_posts_ids,subjects_names,subjects_ids,wings_names,wings_ids,employment_status_name,employment_status_id
+</pre>
+<p>Use comma or pipe to separate multiple values (choose in form).</p>
+
+<a href="{% static 'downloads/employee_import_sample.csv' %}"
+   class="btn btn-outline-primary btn-sm"
+   download>
+  <i class="bi bi-download"></i> Download Sample CSV
+</a>
+
+{% endblock %}

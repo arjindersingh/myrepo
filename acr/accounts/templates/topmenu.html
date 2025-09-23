@@ -1,0 +1,89 @@
+
+    <!-- Auth Links -->
+    <div class="col-md-1 text-end">
+        <div class="dropdown">
+            {% if request.user.is_authenticated %}
+            <button class="btn btn-outline-light btn-sm dropdown-toggle rounded-pill shadow-sm" type="button"
+                id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ display_name }} 
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'edit_basic_user_profile' %}">Edit Profile</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'ShowAccountDashboard' %}">Administration</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'show_appraisal_dashboard' %}">Appraisal</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item text-danger" href="{% url 'LogoutUser' %}">Logout</a></li>
+
+
+            </ul>
+            {% else %}
+            <button class="btn btn-outline-light btn-sm dropdown-toggle rounded-pill shadow-sm" type="button"
+                id="guestMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                Account ▼
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'LoginUser' %}">Login</a></li>
+                <li><a class="dropdown-item" href="{% url 'RegisterUser' %}">Register</a></li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+    </ul>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("sidebar");
+        const dropdownItems = document.querySelectorAll("#sidebar .nav-item.dropdown");
+
+        // Expand/collapse sidebar
+        window.expandSidebar = function () {
+            sidebar.style.width = "250px";
+            const labels = sidebar.querySelectorAll("span");
+            labels.forEach(label => label.classList.remove("d-none"));
+        };
+
+        window.collapseSidebar = function () {
+            const isAnyDropdownHovered = Array.from(dropdownItems).some(item =>
+                item.matches(":hover") || item.querySelector(".dropdown-menu").matches(":hover")
+            );
+            if (!isAnyDropdownHovered) {
+                sidebar.style.width = "60px";
+                const labels = sidebar.querySelectorAll("span");
+                labels.forEach(label => label.classList.add("d-none"));
+            }
+        };
+
+        // Handle dropdowns on hover
+        dropdownItems.forEach(item => {
+            const menu = item.querySelector(".dropdown-menu");
+
+            item.addEventListener("mouseenter", function () {
+                if (menu) {
+                    menu.classList.add("show");
+                    menu.style.display = "block";
+                }
+            });
+
+            item.addEventListener("mouseleave", function () {
+                if (menu) {
+                    menu.classList.remove("show");
+                    menu.style.display = "none";
+                }
+                collapseSidebar();  // Re-check if sidebar should collapse
+            });
+
+            if (menu) {
+                menu.addEventListener("mouseleave", collapseSidebar);
+            }
+        });
+    });
+</script>

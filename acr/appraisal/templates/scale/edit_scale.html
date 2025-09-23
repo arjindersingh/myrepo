@@ -1,0 +1,14 @@
+{% extends 'acbase.html' %}
+{% block title %}Scale Form{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{% if scale %}Edit Scale{% else %}Add Scale{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'show_scale_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

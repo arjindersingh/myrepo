@@ -1,0 +1,81 @@
+{% extends 'acbase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">{{ scheme.name }} - ACR Report for {{ employee.emp_name }}</h2>
+
+    <table class="table table-bordered mt-4">
+        <thead class="thead-dark">
+            <tr>
+                <th>Domain</th>
+                <th>Item</th>
+                <th>Selected Option</th>
+                <th>Score</th>
+                <th>Max Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in domain_results %}
+                <tr class="bg-primary text-white">
+                    <td colspan="5"><strong>{{ data.domain_name }}</strong></td>
+                </tr>
+                
+                {% for item_acr in data.items %}
+                    <tr>
+                        <td></td>
+                        <td>{{ item_acr.item.statement }}</td>
+                        <td>{{ item_acr.selected_option_text }}</td>
+                        <td>{{ item_acr.obtained_marks }}</td>
+                        <td>{{ item_acr.maximum_marks }}</td>
+                    </tr>
+                {% endfor %}
+                
+                <tr class="bg-light">
+                    <td colspan="3"><strong>Domain Total</strong></td>
+                    <td><strong>{{ data.domain_obtained }}</strong></td>
+                    <td><strong>{{ data.domain_max_marks }}</strong></td>
+                </tr>
+                <tr class="bg-light">
+                    <td colspan="5"><strong>Percentage: {{ data.percentage|floatformat:2 }}%</strong></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="text-center mt-4">Overall Score</h3>
+    <p class="text-center"><strong>{{ total_obtained }} / {{ total_max_marks }}</strong> ({{ percentage|floatformat:2 }}%)</p>
+
+    <canvas id="acrChart"></canvas>
+</div>
+
+<!-- Chart.js for Graph -->
+<script>
+    var ctx = document.getElementById('acrChart').getContext('2d');
+    var graphData = JSON.parse('{{ graph_data|escapejs }}');
+    var labels = graphData.map(domain => domain.domain);
+    var datasets = graphData.map((domain, index) => ({
+        label: domain.domain,
+        data: domain.scores,
+        borderColor: `hsl(${index * 60}, 70%, 50%)`,
+        fill: false
+    }));
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: graphData.length > 0 ? graphData[0].items.map(item => item.item) : [],
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

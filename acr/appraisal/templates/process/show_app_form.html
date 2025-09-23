@@ -1,0 +1,116 @@
+{% extends 'appraisal_base.html' %}
+{% load static %}
+{% load appraisal_filters %}
+
+{% block title %}Appraisal Form{% endblock %}
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="container ">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-6">
+                Appraising
+                <span class="badge bg-primary">{{ employee.emp_name }}</span>
+                <small class="text-muted">({{ employee.emp_code }})</small>
+                on <span class="badge bg-info text-dark">{{ CAT.display_name }}</span> for 
+            </div>
+            <div class="col-md-2">
+                <select name="emp_institutes" class="form-control">
+                    {% for inst in emp_institutes %}
+                    <option value="{{ inst.id }}">{{ inst.short_name }}</option>
+                    {% empty %}
+                    <option disabled>No institutes available</option>
+                    {% endfor %}
+                </select>
+            </div>
+            with Category
+            <div class="col-md-2">
+                <select name="emp_job_categories" class="form-control">
+                    {% for ejc in emp_job_categories %}
+                    <option value="{{ ejc.id }}">{{ ejc.category_name }}</option>
+                    {% empty %}
+                    <option disabled>No job categories available</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="card-info text-muted"><strong>{{ CAT.domain_description }}</strong></div>
+    </div>
+
+    <!-- Scale table -->
+<div class="mt-3">
+  <table class="table table-bordered table-striped table-hover align-middle w-100" style="table-layout: auto;">
+    <thead class="table-dark">
+      <tr>
+        <th class="text-center">SN</th>
+        <th>Item Statement</th>
+        <th colspan="6" class="text-center">Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in CAT_scale.items.all %}
+      <tr>
+        <td class="fw-bold text-center">{{ forloop.counter }}</td>
+        <td>{{ item.statement }}</td>
+  
+        {% with key="item_"|add:item.id|stringformat:"s" %}
+        {% with selected=filled_answers|get_item:key %}
+  
+          {% if item.option_set and item.option_set.options.count %}
+            {% for option in item.option_set.options.all %}
+              <td class="text-center">
+                <div class="form-check d-flex justify-content-center">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="item_{{ item.id }}"
+                    value="{{ option.value }}"
+                    id="item{{ item.id }}_opt{{ forloop.counter }}"
+                    {% if selected|stringformat:"s" == option.value|stringformat:"s" %}checked{% endif %}
+                  >
+                  <label class="form-check-label ms-1" for="item{{ item.id }}_opt{{ forloop.counter }}">
+                    {{ option.text }}
+                  </label>
+                </div>
+              </td>
+            {% endfor %}
+          {% else %}
+            <td colspan="6" class="text-center text-muted">No options available</td>
+          {% endif %}
+  
+        {% endwith %}
+        {% endwith %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+</div>
+
+
+    <!-- Remarks -->
+    <div class="mb-3">
+        <label for="remarks" class="form-label fw-bold">Remarks, if any</label>
+        <textarea class="form-control" id="remarks" name="remarks" rows="4"
+            placeholder="Enter any additional remarks here...">{{ remarks_filled|default_if_none:'' }}</textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <a href="{% url 'start_appraisal_process' CAT.id %}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancel
+        </a>
+        <button type="reset" class="btn btn-warning">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Submit
+        </button>
+    </div>
+
+    </div>
+</form>
+
+{% endblock %}

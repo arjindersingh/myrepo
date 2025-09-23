@@ -1,0 +1,76 @@
+{% extends 'acbase.html' %}
+{% load static %}
+{% load appraisal_filters %}
+{% block title %}Appraisal Employee Selection Settings{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-3">{{ page_title }}</h1>
+    <p class="text-muted mb-4">
+        Appraisal Type: <strong>{{ CAT }}</strong>
+        Academic Year: <strong>{{ CAY.display_name }}</strong>
+    </p>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="card shadow-sm">
+        {% csrf_token %}
+        <div class="card-body p-0">
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger m-3">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <table class="table table-hover m-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:45%;">Criterion</th>
+                        <th style="width:15%;">Setting Status</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for crit in criteria_qs %}
+                    {% with fid=crit.pk|stringformat:"s" %}
+                    {% with fname="crit_"|add:fid %}
+                    {% with field=form|field_by_name:fname %}
+                    <tr class="criteria-row">
+                        <td>
+                            <label for="{{ field.id_for_label }}" class="fw-semibold">
+                                {{ crit.display_name|default:crit.name }}
+                            </label>
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ field }}</td>
+                        <td>
+                            <div class="helptext">{{ crit.description }}</div>
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% endwith %}
+                    {% endwith %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">No criteria found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <a href="{% url 'appraisal_type_list' %}" class="btn btn-light">Cancel</a>
+                <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endblock %}

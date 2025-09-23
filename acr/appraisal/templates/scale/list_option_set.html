@@ -1,0 +1,57 @@
+{% extends 'acbase.html' %}
+
+{% block content %}
+<div class="d-flex gap-2 mb-3">
+    <a href="{% url 'show_scale_list' %}" class="btn btn-info btn-lg">Scales</a>
+    <a href="{% url 'add_scale' %}" class="btn btn-primary btn-lg">Add Scale</a>
+    <a href="{% url 'list_option_set' %}" class="btn btn-info btn-lg">Option Sets</a>
+    <a href="{% url 'add_option_set' %}" class="btn btn-success btn-lg">Add Option Set</a>
+</div>
+
+<div class="container mt-4">
+    <h2>Option Sets</h2>
+    <a href="{% url 'add_option_set' %}" class="btn btn-success mb-3">Add New Option Set</a>
+
+    <input type="text" id="searchInput" class="form-control mb-2" placeholder="Search Option Set Name...">
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Option Set Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            {% for option_set in option_sets %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="option-set-name">{{ option_set.name }}</td>
+                <td>
+                    <a href="{% url 'add_option' option_set.id %}" class="btn btn-primary btn-sm">Add Option</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No Option Sets Available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach(row => {
+                let optionSetName = row.querySelector('.option-set-name').textContent.toLowerCase();
+                if (optionSetName.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
+{% endblock %}

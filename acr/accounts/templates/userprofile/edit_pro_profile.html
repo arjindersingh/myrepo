@@ -1,0 +1,318 @@
+{% extends "acbase.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="text-center mb-4">Edit User Profile, Assessor and Inspection Information of
+        '{{user_profile.display_name}}'</h3>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            {% for field, errors in form.errors.items %}
+            <li><strong>{{ field|capfirst }}:</strong> {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger mt-3">
+        <ul class="mb-0">
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="card p-4 shadow-lg mt-3">
+        {% csrf_token %}
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1"
+                    type="button">Account & Profile</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button">User
+                    Relations</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3"
+                    type="button">Appraisal (ACR)</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4"
+                    type="button">Inspection</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button">
+                    Security</button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-3" id="profileTabsContent">
+
+            <!-- Tab 1 -->
+            <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">Account</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">{{ form.username.label_tag }} {{ form.username }}</div>
+                    <div class="col-md-6 mb-3">{{ form.email.label_tag }} {{ form.email }}</div>
+
+                    <div class="col-12 mt-2">
+                        <h5 class="mb-3">Basic Profile</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">{{ form.display_name.label_tag }} {{ form.display_name }}</div>
+                    <div class="col-md-6 mb-3">{{ form.gender.label_tag }} {{ form.gender }}</div>
+                    <div class="col-md-6 mb-3">{{ form.dob.label_tag }} {{ form.dob }}</div>
+                    <div class="col-md-6 mb-3">{{ form.mobile.label_tag }} {{ form.mobile }}</div>
+                    <div class="col-md-6 mb-3">{{ form.emp_code.label_tag }} {{ form.emp_code }}</div>
+                </div>
+            </div>
+
+            <!-- Tab 2 -->
+            <div class="tab-pane fade" id="tab2" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">User Relations</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">{{ form.user_groups.label_tag }} {{ form.user_groups }}</div>
+                    <div class="col-md-6 mb-3">{{ form.user_institutes.label_tag }} {{ form.user_institutes }}</div>
+                    <div class="col-md-6 mb-3">{{ form.user_departments.label_tag }} {{ form.user_departments }}</div>
+                    <div class="col-md-6 mb-3">{{ form.user_wings.label_tag }} {{ form.user_wings }}</div>
+                    <div class="col-md-6 mb-3">{{ form.user_subjects.label_tag }} {{ form.user_subjects }}</div>
+                </div>
+            </div>
+
+            <!-- Tab 3 -->
+            <div class="tab-pane fade" id="tab3" role="tabpanel">
+                <div class="row">
+                    <div class="col-12 mb-3 form-check">
+                        {{ form.is_assessor }} {{ form.is_assessor.label_tag }}
+                    </div>
+
+                    <div id="assessorFields">
+                        <div class="col-md-6 mb-3">{{ form.app_categories.label_tag }} {{ form.app_categories }}</div>
+                        <div class="col-md-6 mb-3">{{ form.app_institutes.label_tag }} {{ form.app_institutes }}</div>
+                        <div class="col-md-6 mb-3">{{ form.app_departments.label_tag }} {{ form.app_departments }}</div>
+                        <div class="col-md-6 mb-3">{{ form.app_wings.label_tag }} {{ form.app_wings }}</div>
+                        <div class="col-md-6 mb-3">{{ form.app_types.label_tag }} {{ form.app_types }}</div>
+                        <div class="col-md-6 mb-3">{{ form.app_subjects.label_tag }} {{ form.app_subjects }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4 -->
+            <div class="tab-pane fade" id="tab4" role="tabpanel">
+                <div class="row">
+                    <div class="col-12 mb-3 form-check">
+                        {{ form.is_inspector }} {{ form.is_inspector.label_tag }}
+                    </div>
+
+                    <div id="inspectorFields">
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_categories.label_tag }}
+                            {{ form.inspection_categories }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_institutes.label_tag }}
+                            {{ form.inspection_institutes }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_departments.label_tag }}
+                            {{ form.inspection_departments }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_wings.label_tag }}
+                            {{ form.inspection_wings }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_types.label_tag }}
+                            {{ form.inspection_types }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.inspection_subjects.label_tag }}
+                            {{ form.inspection_subjects }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Tab 4 -->
+            <div class="tab-pane fade" id="tab5" role="tabpanel">
+                <div class="row">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Change Password</h5>
+
+                            <form method="post" novalidate>
+                                {% csrf_token %}
+
+                                <div class="row mb-3">
+                                    <!-- Left column -->
+                                    <div class="col-md-6">
+                                        <label for="id_password1" class="form-label">New password</label>
+                                        {{ password_change_form.password1 }}
+                                        <!-- Strength meter -->
+                                        <div class="mb-2">
+                                            <div class="progress" style="height: 8px;">
+                                                <div id="pwdStrengthBar" class="progress-bar" role="progressbar"
+                                                    style="width: 0%"></div>
+                                            </div>
+                                            <div id="pwdStrengthLabel" class="small mt-1 text-muted">Strength: —</div>
+                                        </div>
+                                        {% if password_change_form.password1.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ password_change_form.password1.errors|striptags }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <!-- Right column -->
+                                    <div class="col-md-6">
+                                        <div class="form-text mb-2">
+                                            {{ password_change_form.password1.help_text|safe }}
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                                <!-- Suggestion + show/hide -->
+                                <div class="d-flex gap-2 mb-3">
+                                    <button type="button" id="suggestPwd"
+                                        class="btn btn-outline-secondary btn-sm">Suggest strong password</button>
+                                    <button type="button" id="togglePwd"
+                                        class="btn btn-outline-secondary btn-sm">Show</button>
+                                </div>
+
+                                <button type="submit" name="change_password" class="btn btn-primary">Change</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{% url 'ShowDashboard' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" name="update_user_profile" class="btn btn-success">Save Changes</button>
+        </div>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'user_group_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to User Groups
+        </a>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const assessorCheckbox = document.getElementById("id_is_assessor");
+        const inspectorCheckbox = document.getElementById("id_is_inspector");
+        const assessorFields = document.querySelectorAll("#assessorFields select, #assessorFields input");
+        const inspectorFields = document.querySelectorAll("#inspectorFields select, #inspectorFields input");
+
+        function toggleFields(checkbox, fields) {
+            fields.forEach(field => {
+                if (!checkbox.checked) {
+                    field.disabled = true;       // ❌ excluded from POST
+                    if (field.tagName === "SELECT") {
+                        field.selectedIndex = -1; // clear selected options
+                    } else if (field.type === "checkbox" || field.type === "radio") {
+                        field.checked = false;    // clear checkboxes/radios
+                    } else {
+                        field.value = "";         // clear text inputs
+                    }
+                } else {
+                    field.disabled = false;      // ✅ will be sent in POST
+                }
+            });
+        }
+
+        // Initial state
+        toggleFields(assessorCheckbox, assessorFields);
+        toggleFields(inspectorCheckbox, inspectorFields);
+
+        // On change
+        assessorCheckbox.addEventListener("change", () => toggleFields(assessorCheckbox, assessorFields));
+        inspectorCheckbox.addEventListener("change", () => toggleFields(inspectorCheckbox, inspectorFields));
+    });
+</script>
+
+<script>
+    // Simple strength estimator (length + variety)
+    function estimateStrength(p) {
+        let score = 0;
+        if (!p) return 0;
+        if (p.length >= 8) score += 1;
+        if (p.length >= 12) score += 1;
+        if (/[a-z]/.test(p) && /[A-Z]/.test(p)) score += 1;
+        if (/\d/.test(p)) score += 1;
+        if (/[^A-Za-z0-9]/.test(p)) score += 1;
+        // cap 5
+        return Math.min(score, 5);
+    }
+
+    function scoreToPct(score) {
+        return (score / 5) * 100;
+    }
+
+    function scoreToLabel(score) {
+        const labels = ["Very weak", "Weak", "Okay", "Good", "Strong", "Excellent"];
+        return labels[score] || labels[0];
+    }
+
+    const pwdInput = document.getElementById("id_password1");
+    const bar = document.getElementById("pwdStrengthBar");
+    const label = document.getElementById("pwdStrengthLabel");
+
+    pwdInput.addEventListener("input", () => {
+        const s = estimateStrength(pwdInput.value);
+        const pct = scoreToPct(s);
+        bar.style.width = pct + "%";
+        // color hint via bootstrap classes
+        bar.className = "progress-bar";
+        if (s <= 1) bar.classList.add("bg-danger");
+        else if (s === 2) bar.classList.add("bg-warning");
+        else if (s === 3) bar.classList.add("bg-info");
+        else bar.classList.add("bg-success");
+        label.textContent = "Strength: " + scoreToLabel(s);
+    });
+
+    // Suggestion generator (memorable, strong)
+    function suggestPassword() {
+        // 3 random words + number + symbol
+        const words = ["river", "sun", "mango", "atlas", "zebra", "lotus", "pixel", "orbit", "cobalt", "saffron", "ember", "quantum", "falcon", "nova", "violin"];
+        function pick() { return words[Math.floor(Math.random() * words.length)]; }
+        const suggestion = `${pick()}-${pick()}-${pick()}-${Math.floor(100 + Math.random() * 900)}!`;
+        return suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
+    }
+
+    document.getElementById("suggestPwd").addEventListener("click", () => {
+        const s = suggestPassword();
+        pwdInput.value = s;
+        pwdInput.dispatchEvent(new Event("input"));
+    });
+
+    // Show/Hide toggle
+    const toggleBtn = document.getElementById("togglePwd");
+    toggleBtn.addEventListener("click", () => {
+        if (pwdInput.type === "password") {
+            pwdInput.type = "text";
+            toggleBtn.textContent = "Hide";
+        } else {
+            pwdInput.type = "password";
+            toggleBtn.textContent = "Show";
+        }
+    });
+</script>
+
+{% endblock %}

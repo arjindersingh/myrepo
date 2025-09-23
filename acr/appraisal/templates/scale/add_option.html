@@ -1,0 +1,69 @@
+{% extends 'acbase.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add Option to "{{ option_set.name }}"</h2>
+
+    <form method="post" class="p-4 border rounded shadow-sm bg-light">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.text.id_for_label }}" class="form-label">Option Text</label>
+            {{ form.text }}
+            {% if form.text.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.text.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.value.id_for_label }}" class="form-label">Option Value</label>
+            {{ form.value }}
+            {% if form.value.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.value.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Save Option</button>
+            <a href="{% url 'list_option_set' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+    <!-- Display List of Options Below the Form -->
+    <div class="mt-4">
+        <h4>Existing Options for "{{ option_set.name }}"</h4>
+        {% if option_set.options.all %}
+            <table class="table table-bordered table-striped mt-2">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Option Text</th>
+                        <th>Option Value</th>
+                        <th>Actions</th> <!-- New Column for Edit Button -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for option in option_set.options.all %}
+                        <tr>
+                            <td>{{ option.text }}</td>
+                            <td>{{ option.value }}</td>
+                            <td>
+                                <a href="{% url 'edit_option' option.id %}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted">No options added yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

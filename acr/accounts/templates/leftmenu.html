@@ -1,0 +1,104 @@
+<div id="sidebar" class="d-flex flex-column -0 p-3 bg-dark text-white sidebar" onmouseover="expandSidebar()"
+    onmouseleave="collapseSidebar()" style="width: 150px; height: 100vh; position: fixed; transition: width 0.3s;">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        <!--- Dashboard -->
+        <li class="nav-item">
+            <a href="{% url 'ShowDashboard' %}"
+                class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-lg text-light bg-gradient bg-transparent hover:bg-primary transition">
+                <i class="bi bi-speedometer2 fs-5"></i>
+                <span class="d-none d-md-inline fw-semibold">Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Academic Year -->
+        <li>
+            <a href="{% url 'academic_year_list' %}" class="dropdown-item text-white">Academic Year</a>
+        </li>
+        <!--- User managmenet -->
+        <li>
+            <a href="{% url 'list_user_profiles' %}" class="dropdown-item text-white">Users</a>
+        </li>
+
+
+        <!-- Employee Management -->
+        <li>
+            <a href="{% url 'list_employees' %}" class="dropdown-item text-white">Employees</a>
+        </li>
+        <li class="nav-item dropend">
+            <a href="#" class="nav-link text-white dropdown-toggle" data-bs-toggle="dropdown" role="button">
+                <i class="bi bi-bar-chart"></i>
+                <span class="d-none d-md-inline">Appraisal </span>
+            </a>
+            <ul class="dropdown-menu bg-dark border-0">
+                <li>
+                    <a href="{% url 'show_scale_list' %}"
+                        class="dropdown-item text-white {% if request.resolver_match.url_name == 'show_scale_list' %}active{% endif %}">
+                        Scales 
+                    </a>
+                </li>
+                <li>
+<!--                     <a href="{ % url 'list_acr_domain' %}"
+                        class="dropdown-item text-white { % if request.resolver_match.url_name == 'list_acr_domain' %}active{ % endif %}">
+                        Domains
+                    </a> -->
+                </li>
+                <li>
+                    <a href="{% url 'appraisal_type_list' %}"
+                        class="dropdown-item text-white {% if request.resolver_match.url_name == 'appraisal_type_list' %}active{% endif %}">
+                        Appraisal Types
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <hr>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("sidebar");
+        const dropdownItems = document.querySelectorAll("#sidebar .nav-item.dropend");
+
+        // Expand/collapse sidebar
+        window.expandSidebar = function () {
+            sidebar.style.width = "250px";
+            const labels = sidebar.querySelectorAll("span");
+            labels.forEach(label => label.classList.remove("d-none"));
+        };
+
+        window.collapseSidebar = function () {
+            const isAnyDropdownHovered = Array.from(dropdownItems).some(item =>
+                item.matches(":hover") || item.querySelector(".dropdown-menu").matches(":hover")
+            );
+            if (!isAnyDropdownHovered) {
+                sidebar.style.width = "60px";
+                const labels = sidebar.querySelectorAll("span");
+                labels.forEach(label => label.classList.add("d-none"));
+            }
+        };
+
+        // Handle dropdowns on hover
+        dropdownItems.forEach(item => {
+            const menu = item.querySelector(".dropdown-menu");
+
+            item.addEventListener("mouseenter", function () {
+                if (menu) {
+                    menu.classList.add("show");
+                    menu.style.display = "block";
+                }
+            });
+
+            item.addEventListener("mouseleave", function () {
+                if (menu) {
+                    menu.classList.remove("show");
+                    menu.style.display = "none";
+                }
+                collapseSidebar();  // Re-check if sidebar should collapse
+            });
+
+            if (menu) {
+                menu.addEventListener("mouseleave", collapseSidebar);
+            }
+        });
+    });
+</script>

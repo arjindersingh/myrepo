@@ -1,0 +1,26 @@
+{% load static %}
+{% include 'acheader.html' %}
+
+<!-- Layout -->
+<div class="row">
+    <div class="container-fluid">
+        <!-- Main Content -->
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- Date-Time Script -->
+<script>
+    function updateDateTime() {
+        const el = document.getElementById('date-time');
+        if (el) {
+            const now = new Date();
+            el.textContent = now.toLocaleString();
+        }
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+</script>
+
+
+{% include 'acfooter.html' %}

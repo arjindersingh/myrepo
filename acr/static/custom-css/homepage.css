@@ -1,0 +1,138 @@
+/* ========== BASE ========== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ========== HEADER ========== */
+.header {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: linear-gradient(135deg, #0d6efd, #3a86ff);
+    color: #fff;
+    border-bottom: 3px solid #0b5ed7;
+}
+
+/* Top info bar inside header */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.top-bar .info-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.top-bar .info-right {
+    text-align: right;
+}
+
+.top-bar .highlight {
+    font-weight: bold;
+    color: #ffc107;
+}
+
+/* Branding area with logo */
+.branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem 1rem;
+}
+
+.logo {
+    background: url("../images/logo.jpg") no-repeat center/cover;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 0.5rem;
+    border: 2px solid #ffc107;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.branding h1 {
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+
+/* ========== LINKS ========== */
+.header a.btn {
+    display: inline-block;
+    background: #ffc107;
+    color: #212529;
+    padding: 0.4rem 0.85rem;
+    border-radius: 0.4rem;
+    font-weight: 500;
+    margin: 0.2rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.header a.btn:hover {
+    background: #e0a800;
+    color: #fff;
+}
+
+.header .btn-link {
+    color: #fff;
+    text-decoration: underline;
+    font-size: 0.95rem;
+}
+
+/* ========== DJANGO MESSAGES ========== */
+.messages {
+    list-style: none;
+    margin: 1rem auto;
+    padding: 0;
+    max-width: 360px;
+}
+
+.messages li {
+    margin-bottom: 0.6rem;
+    padding: 0.85rem;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.messages .error,
+.messages .alert-danger {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.messages .success,
+.messages .alert-success {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.messages .info,
+.messages .alert-info {
+    background: #cff4fc;
+    color: #055160;
+}
+
+.messages .warning,
+.messages .alert-warning {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+/* ========== LAYOUT ========== */
+.container {
+    margin-top: 1.5rem;
+}

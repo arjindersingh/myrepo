@@ -1,0 +1,26 @@
+{% extends 'acbase.html' %}
+{% block content %}
+<h2>Settings for {{ active_year.year_name }}</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Actions</th>
+    </tr>
+    {% for setting in settings %}
+    <tr>
+        <td>{{ setting.name }}</td>
+        <td>{{ setting.default_value }}</td>
+        <td>
+            <a href="{% url 'setting_edit' setting.id %}">Edit</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No settings found for this academic year.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

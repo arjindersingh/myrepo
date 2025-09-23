@@ -1,0 +1,31 @@
+{% load static %}
+{% include 'acheader.html' %}
+
+    <!-- Layout -->
+    <div class="row">
+        <div class="= collapseSidebar">
+            {% include 'appraisal_leftmenu.html' %}
+        </div>
+        <div class="container-fluid">
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Date-Time Script -->
+    <script>
+        function updateDateTime() {
+            const el = document.getElementById('date-time');
+            if (el) {
+                const now = new Date();
+                el.textContent = now.toLocaleString();
+            }
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+
+
+{% include 'acfooter.html' %}

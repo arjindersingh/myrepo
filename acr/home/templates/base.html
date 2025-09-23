@@ -1,0 +1,84 @@
+{% load static %}
+<!-- {  load django_bootstrap5 %} -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'custom-css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'custom-css/hom epage.css' %}">
+    <!-- {bootstrap_css %} -->
+</head>
+
+<body>
+    <div class="container header flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
+        <div class="logo w-full md:w-auto mb-4 md:mb-0"></div>
+        
+        <form class="login-form flex flex-col md:flex-row gap-2 w-full md:w-auto" method="POST"
+            action="{% url 'LoginUser' %}">
+            {% csrf_token %}
+            <input type="text" id="username" name="username" placeholder="Username" required
+                class="px-3 py-2 border rounded w-full md:w-auto">
+            <input type="password" id="password" name="password" placeholder="Password" required
+                class="px-3 py-2 border rounded w-full md:w-auto">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto">Login</button>
+        </form>
+
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+            <a href="{% url 'password_reset' %}"
+                class="btn btn-primary text-center bg-gray-500 text-white px-4 py-2 rounded w-full md:w-auto">Forgot
+                Password</a>
+            <a href="{% url 'RegisterUser' %}"
+                class="btn btn-primary text-center bg-green-500 text-white px-4 py-2 rounded w-full md:w-auto">Register</a>
+        </div>
+    </div>
+
+
+    {% if messages %}
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-sm">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="messageModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled mb-0">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+    {% endif %}
+    <!-- Bootstrap JS (Local) -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById("messageModal"));
+            modal.show();
+            setTimeout(() => modal.hide(), 5000);
+        });
+    </script>
+    <!-- { bootstrap_javascript %} -->
+    {% block extra_js %}{% endblock %}

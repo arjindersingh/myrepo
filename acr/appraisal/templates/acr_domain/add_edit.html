@@ -1,0 +1,27 @@
+{% extends 'acbase.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} ACR Domain</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            {{ form.name }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Scale</label>
+            {{ form.scale }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            {{ form.acr_category }}
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'list_acr_domain' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

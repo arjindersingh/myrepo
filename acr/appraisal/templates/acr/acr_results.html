@@ -1,0 +1,142 @@
+{% extends "acbase.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+<h3>ACR Results</h3>
+
+<!-- Form for filtering results -->
+<form id="acr-form" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3">
+            {{ form.acr_scheme.label_tag }}
+            {{ form.acr_scheme }}
+        </div>
+
+        <div class="col-md-3">
+            {{ form.institute.label_tag }}
+            {{ form.institute }}
+        </div>
+
+        <div class="col-md-3">
+            {{ form.top_percentage.label_tag }}
+            {{ form.top_percentage }}
+        </div>
+
+        <div class="col-md-3">
+            {{ form.bottom_percentage.label_tag }}
+            {{ form.bottom_percentage }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs mt-4" id="acrTabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="toppers-tab" data-bs-toggle="tab" href="#toppers" role="tab">Star Performers</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="bottommers-tab" data-bs-toggle="tab" href="#bottommers" role="tab">Under Performers</a>
+    </li>
+</ul>
+
+
+<div class="tab-content mt-3" id="acrTabsContent">
+    <!-- Toppers Table -->
+    <div class="tab-pane fade show active" id="toppers" role="tabpanel">
+        <h4 class="mt-3">Top Performers</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Employee Code</th>
+                    <th>Employee</th>
+                    {% for domain in domains %}
+                    <th>{{ domain.name }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in toppers %}
+                <tr>
+                    <td>{{ employee.emp_code }}</td>
+                    <td>{{ employee.name }}</td>
+                    {% for domain in domains %}
+                    <td>{{ employee.scores|get_item:domain.id|default:0 }}</td>
+                    {% endfor %}
+                    <td>{{ employee.total }}</td>
+                    <td>
+                        <a href="{% url 'display_acr_assessment_scale' scheme_id=acr_scheme.id employee_id=employee.id domain_id=5 %}" class="btn btn-info btn-sm">
+                            Classroom Observation
+                        </a>                        
+                    </td>
+                    <td>
+                        <a href="{% url 'display_acr_assessment_scale' scheme_id=acr_scheme.id employee_id=employee.id domain_id=6 %}" class="btn btn-info btn-sm">
+                            Record Verification
+                        </a>
+                        
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="{{ domains|length|add:2 }}">No data available</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bottommers Table -->
+    <div class="tab-pane fade" id="bottommers" role="tabpanel">
+        <h4 class="mt-3">Bottom Performers</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Employee Code</th>
+                    <th>Employee</th>
+                    {% for domain in domains %}
+                    <th>{{ domain.name }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in bottommers %}
+                <tr>
+                    <td>{{ employee.emp_code }}</td>
+                    <td>{{ employee.name }}</td>
+                    {% for domain in domains %}
+                    <td>{{ employee.scores|get_item:domain.id|default:0 }}</td>
+                    {% endfor %}
+                    <td>{{ employee.total }}</td>
+                    <td>
+                        <a href="{% url 'display_acr_assessment_scale' scheme_id=acr_scheme.id employee_id=employee.id domain_id=5 %}" class="btn btn-info btn-sm">
+                            Classroom Observation
+                        </a>                        
+                    </td>
+                    <td>
+                        <a href="{% url 'display_acr_assessment_scale' scheme_id=acr_scheme.id employee_id=employee.id domain_id=6 %}" class="btn btn-info btn-sm">
+                            Record Verification
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="{{ domains|length|add:2 }}">No data available</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#acrTabs a').on('click', function (e) {
+            e.preventDefault();
+            new bootstrap.Tab(this).show();
+        });
+    });
+</script>
+
+
+{% endblock %}

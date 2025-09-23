@@ -1,0 +1,65 @@
+{% extends "appraisal_base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Active ACR Schemes</h4>
+
+    {% for scheme_data in acr_schemes %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5>{{ scheme_data.scheme.display_name }} ({{ scheme_data.scheme.start_date }} - {{ scheme_data.scheme.end_date }})</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>SN</th>
+                        <th>Employee</th>
+                        <th colspan ="5">ACR Domains</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in scheme_data.employees %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'display_acr_results' scheme_id=scheme_data.scheme.id employee_id=item.employee.id  %}">
+                                {{ item.employee.emp_name }}
+                            </a>
+                        </td>
+                        
+                        
+                            {% if item.domains %}
+                            <ul class="list-inline">
+                                {% for domain in item.domains %}
+                                <td>
+                                <li class="list-inline-item">
+                                    <a href="{% url 'display_acr_assessment_scale' scheme_id=scheme_data.scheme.id employee_id=item.employee.id domain_id=domain.domain_id %}">
+                                        {{ domain.domain_name }}
+                                    </a>
+                                    {% if domain.last_entry_date %}
+                                        <small class="text-muted">({{ domain.last_entry_date|date:"d M Y" }})</small>
+                                    {% endif %}
+                                </li>
+                            </td>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <span class="text-muted">No Domains Assigned</span>
+                            {% endif %}
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">No Assessees Found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No active ACR schemes available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

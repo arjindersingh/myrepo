@@ -1,0 +1,22 @@
+{% load static %}
+    <!-- Google-like Menu Toggle -->
+    <script>
+        function toggleMenu() {
+            document.getElementById("appMenu").classList.toggle("active");
+        }
+
+        window.onclick = function (event) {
+            const menu = document.getElementById("appMenu");
+            const button = document.querySelector('.app-menu-button');
+            if (!menu.contains(event.target) && !button.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        }
+    </script>
+
+    {% load django_bootstrap5 %}
+    {% bootstrap_javascript %}
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

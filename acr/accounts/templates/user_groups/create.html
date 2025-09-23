@@ -1,0 +1,31 @@
+
+{% extends 'acbase.html' %}
+{% load static %}
+{% load django_bootstrap5  %}
+
+{% block header %}
+{% include 'acheader.html' %}
+{% endblock %}
+{% include 'leftmenu.html' %}
+{% block content %}
+
+
+  <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Group</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="d-flex gap-2 mt-3">
+      <button type="submit" class="btn btn-success">
+          {% if form.instance.pk %}Update Group{% else %}Create Group{% endif %}
+      </button>
+      <a href="{% url 'user_group_list' %}" class="btn btn-secondary">
+          Cancel
+      </a>
+  </div>
+  
+  </form>
+  {% endblock %}
+  {% block footer %}
+  {% include 'acfooter.html' %}
+  {% endblock %}

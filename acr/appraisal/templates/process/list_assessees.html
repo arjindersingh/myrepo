@@ -1,0 +1,83 @@
+{% extends 'appraisal_base.html' %}
+{% load static %}
+{% block title %}Appraisal Schedule List{% endblock %}
+{% block content %}
+{% if CAY %}
+<h3>List of Assessees for '{{ CAT.name }}' for '{{ CAY.display_name }}'. </h3>
+<p>Appraisal Schedule From {{ CAY.start_date|date:"d M Y" }} to {{ CAY.end_date|date:"d M Y" }}</p>
+{% else %}
+<p><em>No active academic year found.</em></p>
+{% endif %}
+
+<div class="container mt-4">
+    {% if Assessees %}
+
+    <!-- Search box -->
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control"
+            placeholder="Search by Employee Name, No, or Institute">
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Employee No</th>
+                    <th>Employee Name</th>
+                    <th>Institute(s)</th>
+                    <th class="text-center">Last Appraisal No</th>
+                    <th>Last Appraisal on</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="assesseeTable">
+                {% for assessee in Assessees %}
+                <tr>
+                    <td>{{ assessee.emp_code }}</td>
+                    <td>{{ assessee.emp_name }}</td>
+                    <td>
+                        {% for inst in assessee.institutes.all %}
+                        {{ inst.short_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-center">{{ assessee.tad_no|default:"—" }}</td>
+                    <td>{{ assessee.tad_created_on|default:"—" }}</td>
+                    <td>
+                        {% if CAT.id and assessee.id %}
+                        <a href="{% url 'show_appraisal_form' CAT.id assessee.id %}" class="btn btn-primary btn-sm">
+                            Fill
+                        </a>
+                        {% else %}
+                        <span class="text-muted">Not available</span>
+                        {% endif %}
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    {% else %}
+    <div class="alert alert-warning">
+        No assessees found for your in the category : <strong>{{ CAT.name }}</strong>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Search Script -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#assesseeTable tr");
+
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+
+{% endblock %}

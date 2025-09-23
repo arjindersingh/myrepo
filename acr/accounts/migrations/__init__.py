@@ -1,0 +1,1 @@
+from accounts.models.userprofile import UserProfile

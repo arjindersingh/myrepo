@@ -1,0 +1,26 @@
+{% extends "acbase.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Add Item to {{ dimension.name }} under {{ scale.name }}</h2>
+
+    <form method="POST" class="card p-4 shadow-lg">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label">{{ form.statement.label }}</label>
+            {{ form.statement }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">{{ form.option_set.label }}</label>
+            {{ form.option_set }}
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'show_scale_list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">Save Item</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

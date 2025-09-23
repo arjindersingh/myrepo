@@ -1,0 +1,327 @@
+{% extends "appraisal_base.html" %}
+{% load static %}
+{% load appraisal_filters %}
+
+{% block title %}Appraisal Matrix{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Consolidated Report ({{ CAY.display_name }})</h4>
+    </div>
+
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label"><strong>{{ form.emp_institutes.label }}</strong></label>
+                {{ form.emp_institutes }}
+                <div class="form-text">Hold Ctrl/Cmd to select multiple.</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label"><strong>{{ form.emp_job_categories.label }}</strong></label>
+                {{ form.emp_job_categories }}
+                <div class="form-text">Hold Ctrl/Cmd to select multiple.</div>
+            </div>
+
+            <!-- Method selector -->
+            <div class="col-md-4">
+                <label class="form-label"><strong>Method</strong></label>
+                <select name="method" class="form-select">
+                    {% for key, label in method_choices %}
+                      <option value="{{ key }}"{% if key == method %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                  
+                <div class="form-text">Choose how cell values are calculated.</div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-primary">Apply</button>
+            <a href="{% url 'show_appraisal_consolidated_Report' %}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    {% if employees and appraisal_types %}
+    <!-- Toolbar: Search -->
+<div class="d-flex align-items-center gap-2 mb-2">
+    <div class="input-group" style="max-width: 420px;">
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input id="matrixFilter" type="search" class="form-control" placeholder="Search employees, codes or values…">
+      <button id="clearMatrixFilter" class="btn btn-outline-secondary" type="button">Clear</button>
+    </div>
+  
+    <div class="form-check ms-2">
+      <input class="form-check-input" type="checkbox" id="searchAllCells" checked>
+      <label class="form-check-label" for="searchAllCells">Search all columns</label>
+    </div>
+  </div>
+  
+  <div class="table-responsive">
+    <table id="matrixTable" class="table table-hover table-striped table-bordered table-sm align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="min-width: 260px;">Employee</th>
+          {% for t in appraisal_types %}
+            <th class="text-center">
+              {{ t.display_name|default:t.name }}
+              <!-- <div class="small text-muted">{{ t.short_name }}</div> -->
+            </th>
+          {% endfor %}
+          <th class="text-center">Total</th>
+        </tr>
+      </thead>
+  
+      <tbody>
+        {% for e in employees %}
+        <tr>
+          <td>
+            <div class="fw-semibold emp-name">{{ e.emp_name }} ({{ e.emp_code }})</div>
+          </td>
+  
+          {% for t in appraisal_types %}
+            {% cell_get cell e.id t.id as c %}
+            {% if c %}
+              <td class="text-center">
+                <div class="fw-semibold">{{ c.text }}</div>
+                <!-- {% if c.subtext %}<div class="small text-muted">{{ c.subtext }}</div>{% endif %} -->
+              </td>
+            {% else %}
+              <td class="text-center text-muted">—</td>
+            {% endif %}
+          {% endfor %}
+  
+          {% dict_get row_totals e.id as rt %}
+          <td class="text-center table-secondary">
+            {% if rt %}
+              <div class="fw-semibold">{{ rt.text }}</div>
+              <!-- {% if rt.subtext %}<div class="small text-muted">{{ rt.subtext }}</div>{% endif %} -->
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <p id="noRowsMsg" class="text-muted mt-2 d-none">No matching records.</p>
+    {% else %}
+    <div class="alert alert-info">No data found for the selected filters.</div>
+    {% endif %}
+</div>
+<div class="d-flex gap-2 mb-2">
+    <button id="btnPdfStyled"  type="button" class="btn btn-outline-primary">PDF (Styled)</button>
+    <button id="btnPdfTable"   type="button" class="btn btn-outline-secondary">PDF (Table)</button>
+    <button id="btnExcel"      type="button" class="btn btn-success">Excel (.xlsx)</button>
+  </div>
+  
+<script>
+    (function () {
+      const $input = document.getElementById('matrixFilter');
+      const $clear = document.getElementById('clearMatrixFilter');
+      const $allCols = document.getElementById('searchAllCells');
+      const $table = document.getElementById('matrixTable');
+      const $rows = $table ? Array.from($table.querySelectorAll('tbody tr')) : [];
+      const $noRowsMsg = document.getElementById('noRowsMsg');
+    
+      function normalize(s) {
+        return (s || '').toString().toLowerCase().trim();
+      }
+    
+      function filterRows() {
+        const q = normalize($input.value);
+        let shown = 0;
+    
+        $rows.forEach(row => {
+          let hay = '';
+          if ($allCols && $allCols.checked) {
+            hay = normalize(row.innerText);
+          } else {
+            // only first cell (employee name + code)
+            const firstTd = row.querySelector('td');
+            hay = normalize(firstTd ? firstTd.innerText : '');
+          }
+          const match = !q || hay.indexOf(q) !== -1;
+          row.classList.toggle('d-none', !match);
+          if (match) shown++;
+        });
+    
+        if ($noRowsMsg) $noRowsMsg.classList.toggle('d-none', shown !== 0);
+      }
+    
+      // Debounce for smoother typing
+      let t = null;
+      function debouncedFilter() {
+        clearTimeout(t);
+        t = setTimeout(filterRows, 120);
+      }
+    
+      if ($input) {
+        $input.addEventListener('input', debouncedFilter);
+        $input.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $input.value = '';
+            filterRows();
+          }
+        });
+      }
+      if ($clear) {
+        $clear.addEventListener('click', () => {
+          $input.value = '';
+          $input.focus();
+          filterRows();
+        });
+      }
+      if ($allCols) {
+        $allCols.addEventListener('change', filterRows);
+      }
+    
+      // Initial run (in case of pre-filled query via GET params)
+      filterRows();
+    })();
+    </script>
+    <!-- scripts for PDF and EXcel Export -->
+    <script>
+(function () {
+  const $table = document.getElementById('matrixTable');
+
+  // Build a CLONE of the table containing only VISIBLE rows (not .d-none)
+  function buildVisibleTableClone() {
+  const src = document.getElementById('matrixTable');
+  const wrap = document.createElement('div');
+  wrap.id = 'exportWrap';
+  // Keep it off-screen but VISIBLE so html2canvas can measure it
+  wrap.style.position = 'fixed';
+  wrap.style.left = '-99999px';
+  wrap.style.top = '0';
+  document.body.appendChild(wrap);
+
+  // Clone the table
+  const clonedTable = src.cloneNode(true);
+  clonedTable.id = 'matrixTableExport';
+
+  // Remove rows that are truly hidden (filtered)
+  const rows = Array.from(clonedTable.querySelectorAll('tbody tr'));
+  rows.forEach(tr => {
+    const isHidden =
+      tr.classList.contains('d-none') ||
+      getComputedStyle(tr).display === 'none' ||
+      tr.hasAttribute('hidden');
+    if (isHidden) tr.remove();
+  });
+
+  // (Optional) strip helper UI in cells
+  // clonedTable.querySelectorAll('.small, .mini, .badge').forEach(n => n.remove());
+
+  // Ensure borders/padding for nice capture
+  clonedTable.style.borderCollapse = 'collapse';
+  clonedTable.querySelectorAll('th,td').forEach(td => {
+    td.style.border = '1px solid #999';
+    td.style.padding = '6px';
+    td.style.whiteSpace = 'nowrap';
+  });
+
+  wrap.appendChild(clonedTable);
+
+  // Debug: check row counts in console
+  // console.log('Export rows:', clonedTable.querySelectorAll('tbody tr').length);
+
+  return { wrap, clonedTable };
+}
+
+  // PDF (Styled) – screenshot-like, keeps Bootstrap styling
+  async function exportPdfStyled(filename) {
+    const { wrap, clonedTable } = buildVisibleTableClone();
+
+    // Put the table in a simple container for nicer capture
+    const container = document.createElement('div');
+    const title = document.createElement('h5');
+    title.textContent = document.querySelector('h4.mb-0')?.innerText || 'Report';
+    title.style.margin = '0 0 10px 0';
+    container.appendChild(title);
+    container.appendChild(clonedTable);
+    document.getElementById('exportWrap').appendChild(container);
+
+    // Disable sticky/overflow if you used them
+    container.classList.add('pdf-mode');
+
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+      pagebreak: { mode: ['css', 'avoid-all', 'legacy'] }
+    };
+
+    try {
+      await html2pdf().set(opt).from(container).save();
+    } finally {
+      wrap.remove();
+    }
+  }
+
+  // Extract headers + body arrays from the VISIBLE table clone
+  function extractTableData(clonedTable) {
+    const headers = Array.from(clonedTable.querySelectorAll('thead th'))
+      .map(th => th.innerText.trim());
+
+    const body = [];
+    Array.from(clonedTable.querySelectorAll('tbody tr')).forEach(tr => {
+      const row = Array.from(tr.children).map(td => td.innerText.trim());
+      body.push(row);
+    });
+    return { headers, body };
+  }
+
+  // PDF (Table) – selectable text, paginated
+  function exportPdfTable(filename) {
+    const { wrap, clonedTable } = buildVisibleTableClone();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'pt', 'a4');
+
+    const title = document.querySelector('h4.mb-0')?.innerText || 'Report';
+    doc.text(title, 40, 30);
+
+    const data = extractTableData(clonedTable);
+    doc.autoTable({
+      head: [data.headers],
+      body: data.body,
+      theme: 'grid',
+      styles: { fontSize: 8, cellPadding: 3, overflow: 'linebreak' },
+      headStyles: { fillColor: [245, 245, 245] },
+      margin: { top: 45, right: 20, bottom: 30, left: 20 }
+    });
+
+    doc.save(filename);
+    wrap.remove();
+  }
+
+  // Excel (.xlsx)
+  function exportExcel(filename) {
+    const { wrap, clonedTable } = buildVisibleTableClone();
+    // Build worksheet from table
+    const ws = XLSX.utils.table_to_sheet(clonedTable, { raw: true });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Report');
+    XLSX.writeFile(wb, filename);
+    wrap.remove();
+  }
+
+  // Wire buttons
+  const dateStr = new Date().toISOString().slice(0,10);
+  document.getElementById('btnPdfStyled')?.addEventListener('click', () =>
+    exportPdfStyled(`Consolidated-Report-${dateStr}.pdf`)
+  );
+  document.getElementById('btnPdfTable')?.addEventListener('click', () =>
+    exportPdfTable(`Consolidated-Report-${dateStr}.pdf`)
+  );
+  document.getElementById('btnExcel')?.addEventListener('click', () =>
+    exportExcel(`Consolidated-Report-${dateStr}.xlsx`)
+  );
+})();
+</script>
+
+{% endblock %}

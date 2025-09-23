@@ -1,0 +1,22 @@
+{% extends 'acbase.html' %}
+{% load static %}
+{% block header %}
+{% include 'acheader.html' %}
+{% endblock %}
+{% include 'leftmenu.html' %}
+{% block content %}
+
+
+  <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Group</h1>
+  {% load bootstrap5 %}
+  <form method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-success">
+      {% if form.instance.pk %}Update Group{% else %}Create Group{% endif %}
+    </button>
+  </form>
+  {% endblock %}
+  {% block footer %}
+  {% include 'acfooter.html' %}
+  {% endblock %}

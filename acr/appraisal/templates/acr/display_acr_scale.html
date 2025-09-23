@@ -1,0 +1,55 @@
+{% extends "acbase.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>ACR of - {{ employee.emp_name }}</h4>
+    <p><strong>Scheme:</strong> {{ scheme.display_name }} ({{ scheme.start_date }} - {{ scheme.end_date }})</p>
+    <p><strong>Domain:</strong> {{ domain }}</p>
+    <p><strong>Scale:</strong> {{ scale.name }} - {{ scale.description }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-bordered table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Item</th>
+                    <th colspan="5">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.statement }}</td>
+                    {% for option in item.option_set.options.all %}
+                    <td>
+                        <label class="me-3">
+                            <input type="radio" name="item_{{ item.id }}" value="{{ option.value }}">
+                            {{ option.text }}
+                        </label>
+                    </td>
+                    {% endfor %}
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted">No items available.</td>
+                </tr>
+                {% endfor %}  
+            </tbody>
+        </table>
+        <!-- Remarks Field -->
+        <div class="mb-3">
+            <label for="remarks" class="form-label"><strong>Remarks:</strong></label>
+            <textarea id="remarks" name="remarks" class="form-control"
+                rows="3">{{ form.remarks.value|default_if_none:'' }}</textarea>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="reset" class="btn btn-warning">Reset</button>
+            <a href="{% url 'list_active_acr_assessees' %}" class="btn btn-danger">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

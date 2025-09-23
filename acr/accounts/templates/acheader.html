@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock %}</title>
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    <!-- <link href="{% static 'custom-css/navbar.css'}" rel="stylesheet"> -->
+    <!-- <script src="{% static 'js/sidebar.js' %}"></script> -->
+
+</head>
+
+<body class="bg-light text-dark">
+
+    <!-- Header Section -->
+    <header class="bg-primary text-white  py-3">
+        <div class="container">
+            <div class="row ">
+                <!-- Logo -->
+                <div class="col-md-1 text-center">
+                    <a href="{% url 'ShowDashboard' %}">
+                        <img src="{% static 'images/logo.jpeg' %}" alt="Logo"
+                            class="rounded-circle border border-warning shadow-sm" width="70" height="70">
+                    </a>
+                </div>
+
+                <!-- Institute Info -->
+                <div class="col-md-10 text-center">
+                    {% if request.user.is_authenticated and request.user.profile %}
+                    <h5 class="fw-bold mb-1 ">
+                        Bowry Memorial Educational and Medical Trust
+                    </h5>
+                    <h5 class="fw-bold mb-1 ">
+                        {% with insts=request.user.profile.user_institutes.all %}
+                        {% if insts %}
+                        {% for inst in insts %}
+                        <span class="badge text-bg-secondary me-1">
+                            {{ inst.short_name }}
+                        </span>
+                        {% endfor %}
+                        {% else %}
+                        <em class="text-muted">No institutes assigned.</em>
+                        {% endif %}
+                        {% endwith %}
+                    </h5>
+                    {% else %}
+                    <h4 class="fw-bold mb-1 bg-light text-primary p-2 rounded shadow-sm">
+                        Bowry Memorial Educational and Medical Trust
+                    </h4>
+                    <h6 class="text-secondary bg-white p-2 rounded shadow-sm">
+                        Welcome to Apprisal Portal.
+                    </h6>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-1 text-end">
+                    {% include 'topmenu.html' %}
+                </div>
+
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% if messages %}
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-sm">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="messageModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled mb-0">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById("messageModal"));
+            modal.show();
+            setTimeout(() => modal.hide(), 5000);
+        });
+    </script>
+    {% endif %}

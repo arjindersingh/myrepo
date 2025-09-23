@@ -1,0 +1,72 @@
+{% extends 'acbase.html' %}
+
+{% block title %}{{ action }} ACR Scheme{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Appraisal Type Details</h2>
+
+<div class="card shadow-sm p-4">
+    <div class="row">
+        <!-- Left column -->
+        <div class="col-md-6">
+            <p><strong>Name:</strong> {{ appraisal_type.name }}</p>
+            <p><strong>Display Name:</strong> {{ appraisal_type.display_name }}</p>
+            <p><strong>Short Name:</strong> {{ appraisal_type.short_name }}</p>
+
+            <p><strong>Institutes:</strong>
+                {% for inst in appraisal_type.at_institutes.all %}
+                    {{ inst.short_name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+
+            <p><strong>Job Categories:</strong>
+                {% for jc in appraisal_type.at_job_categories.all %}
+                    {{ jc.category_name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+
+            <p><strong>Departments:</strong>
+                {% for dept in appraisal_type.at_departments.all %}
+                    {{ dept.short_name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+        </div>
+
+        <!-- Right column -->
+        <div class="col-md-6">
+            <p><strong>Wings:</strong>
+                {% for wing in appraisal_type.at_wings.all %}
+                    {{ wing.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+
+            <p><strong>Subjects:</strong>
+                {% for sub in appraisal_type.at_subjects.all %}
+                    {{ sub.short_name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+
+            <p><strong>Domain Name:</strong> {{ appraisal_type.domain_name }}</p>
+            <p><strong>Domain Description:</strong> {{ appraisal_type.domain_description }}</p>
+            <p><strong>Domain Weight:</strong> {{ appraisal_type.domain_weight }}%</p>
+            <p><strong>Scale:</strong> {{ appraisal_type.scale }}</p>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'appraisal_type_list' %}" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Back
+</a>
+
+{% endblock %}

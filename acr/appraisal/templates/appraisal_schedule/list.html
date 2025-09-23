@@ -1,0 +1,93 @@
+{% extends 'acbase.html' %}
+{% load static %}
+{% block title %}Appraisal Schedule List{% endblock %}
+{% block content %}
+
+<h3>Displaying Academic Schedule for {{ appraisal_type.name }} for Academic Year ({{ CAY.display_name }})</h3>
+
+
+
+<!-- Search Box -->
+<div class="row align-items-center mb-3">
+    <div class="col-md-2">
+        <a href="{% url 'appraisal_type_list' %}" class="btn btn-secondary w-100">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+    <div class="col-md-6">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search schedules...">
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'appraisal_schedule_add' appraisal_type.id %}" class="btn btn-success w-100">
+            <i class="bi bi-plus-circle"></i> Add Schedule
+        </a>
+    </div>
+</div>
+
+
+
+<!-- Table -->
+<table id="scheduleTable" class="table table-striped table-hover table-bordered align-middle mt-2">
+    <thead class="table-primary">
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+            <th scope="col">Description</th>
+            <th scope="col" class="text-center">Edit</th>
+            <th scope="col" class="text-center">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ schedule.start_date }}</td>
+            <td>{{ schedule.end_date }}</td>
+            <td>{{ schedule.description }}</td>
+            <td class="text-center">
+                <a href="{% url 'appraisal_schedule_edit' schedule.id %}" class="btn btn-sm btn-warning">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+            </td>
+            <td class="text-center">
+                <form method="post" action="{% url 'appraisal_schedule_delete' schedule.id %}"
+                    onsubmit="return confirm('Are you sure you want to delete this schedule?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center text-muted">
+                No schedules found for this appraisal type in {{ CAY.name }}.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<!-- JavaScript Search Filter -->
+<script>
+    document.getElementById("searchBox").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#scheduleTable tbody tr");
+
+        rows.forEach(function (row) {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+
+<a href="{% url 'appraisal_type_list' %}" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Back
+</a>
+
+
+{% endblock %}

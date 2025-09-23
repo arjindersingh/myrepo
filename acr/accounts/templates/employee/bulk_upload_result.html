@@ -1,0 +1,29 @@
+{% extends "acbase.html" %}
+{% load accounts_filters %}
+{% block content %}
+<h2>Upload Results {% if dry_run %}(Dry-run){% endif %}</h2>
+<table border="1" cellpadding="6">
+  <thead>
+    <tr>
+      <th>CSV Line</th><th>Emp Code</th><th>Name</th><th>Action</th><th>Errors</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in results %}
+      <tr>
+        <td>{{ r.line }}</td>
+        <td>{{ r.emp_code }}</td>
+        <td>{{ r.emp_name }}</td>
+        <td>{{ r.action }}</td>
+        <td>
+          {% if r.errors %}
+            <ul>{% for e in r.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

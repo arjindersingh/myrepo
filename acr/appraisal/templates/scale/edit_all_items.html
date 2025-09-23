@@ -1,0 +1,59 @@
+{% extends "acbase.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h2>Edit Items</h2>
+
+    <!-- Scale Filter -->
+    <form method="get" class="mb-4">
+        <label for="scaleSelect"><strong>Select Scale:</strong></label>
+        <select name="scale" id="scaleSelect" class="form-select" onchange="this.form.submit()">
+            <option value="">All Scales</option>
+            {% for scale in scales %}
+                <option value="{{ scale.id }}" {% if scale.id|stringformat:"s" == selected_scale_id %}selected{% endif %}>
+                    {{ scale.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- Edit Items Form -->
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" id="tableSearch" class="form-control mb-2" placeholder="Search table...">
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Scale</th>
+                    <th>Statement</th>
+                    <th>Option Set</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for item, form in items %}
+                <tr>
+                    <td>{{ form.scale }}</td>
+                    <td>{{ form.statement }}</td>
+                    <td>{{ form.option_set }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<!-- Search Functionality -->
+<script>
+    document.getElementById("tableSearch").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#tableBody tr");
+
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+{% endblock %}

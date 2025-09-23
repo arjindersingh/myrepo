@@ -1,0 +1,76 @@
+{% extends 'acbase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Inspection Assessment Scale</h2>
+
+    <!-- Employee and Domain Information -->
+    <div class="card shadow-sm mb-4 p-3">
+        <div class="card-body">
+            <h5 class="card-title text-primary">Employee & Domain Information</h5>
+
+            <p class="card-text d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>Employee:</strong> {{ employee.emp_name }}
+                    <span class="badge bg-secondary">{{ employee.emp_code }}</span> |
+                    <strong>Institute:</strong> {{ employee.institute }} |
+                    <strong>Subject:</strong> {{ employee.subject }} |
+                    <strong>Teaching Post:</strong> {{ employee.teaching_post }}
+                </span>
+            </p>
+
+            <p class="card-text d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>Domain:</strong> <span class="fw-bold">{{ domain.name }}</span> |
+                    <strong>Description:</strong> {{ domain.description }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+
+
+    <!-- Assessment Form -->
+    <form method="post" action="{% url 'display_inspection_scale' employee.id domain.id %}">
+        {% csrf_token %}
+
+        {% for dimension, items in item_data.items %}
+        <h4 class="mt-3">{{ dimension }}</h4>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Item</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.item_statement }}</td>
+                    {% for option in item.options %}
+                    <td>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="item_{{ item.item_id }}"
+                                id="option_{{ item.item_id }}_{{ option.value }}" value="{{ option.value }}" required>
+                            <label class="form-check-label" for="option_{{ item.item_id }}_{{ option.value }}">
+                                {{ option.text }}
+                            </label>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+
+        <!-- Form Buttons -->
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="reset" class="btn btn-warning">Reset</button>
+            <a href="{% url 'show_acr_results' %}" class="btn btn-danger">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
