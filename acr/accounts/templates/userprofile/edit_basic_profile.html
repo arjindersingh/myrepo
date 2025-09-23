@@ -1,5 +1,5 @@
 {% extends "acbase.html" %}
-
+{% load django-bootstrap5 %}
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Edit Personal Information</h2>
@@ -12,7 +12,7 @@
     </div>
     {% endif %}
 
-    {% load bootstrap5 %}
+    
     <form method="POST" class="card p-4 shadow-lg">
         {% csrf_token %}
         {% bootstrap_form form %}
