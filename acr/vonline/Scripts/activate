@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="F:\online\vonline"
+VIRTUAL_ENV="/f/online/vonline"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
